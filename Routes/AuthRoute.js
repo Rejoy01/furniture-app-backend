@@ -1,11 +1,12 @@
 import express from 'express';
-import { LoginUser, registerUser } from '../Controller/AuthController.js';
+import { LoginUser, UserWishList, WishListProduct, registerUser } from '../Controller/AuthController.js';
 
 
 const router = express.Router();
 
 router.post('/',registerUser)
 router.post('/login',LoginUser)
-router.post('wishList')
+router.put('/wishList/:id',UserWishList)
+router.get('/wishList',WishListProduct)
 
 export default router
