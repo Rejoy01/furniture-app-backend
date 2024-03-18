@@ -1,10 +1,12 @@
 import express from 'express';
+import { DisplayAll, UploadProduct } from '../Controller/ProductController.js';
+
 
 const router = express.Router()
 
-router.get('/',(req,res) => {
-    res.send('welcome to my products')
-})
+router.post('/',UploadProduct)
+
+router.get('/',DisplayAll)
 
 
 

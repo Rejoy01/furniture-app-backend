@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 
-const { Schema } = mongoose;
+
 
 const productSchema = new Schema({
   title: {
@@ -27,7 +27,6 @@ const productSchema = new Schema({
   review: [{
     rating: {
       type: Number,
-      required: true
     },
     comment: String,
     reviewer: {
