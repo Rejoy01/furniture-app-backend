@@ -37,3 +37,51 @@ export const WishListProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const AddItem = async (req, res) => {
+
+    const {userId , productId,quantity} = req.body;
+    const parsedQuantity = parseInt(quantity);
+    try {
+        const user = await User.findById(userId);
+        if (user) {
+            const CheckProduct = await Product.findById(productId)
+            if(!CheckProduct) {
+                res.status(404).json({ message:"product not found"})
+            }
+            const existingItemIndex = user.cart.findIndex(item => item.product.toString() === productId);
+                if(existingItemIndex !==-1){
+                user.cart[existingItemIndex].quantity += parsedQuantity
+                 }else{
+                user.cart.push({product : productId,quantity})
+                }
+            await user.save()
+
+            res.status(200).json(user)
+            
+        }
+    } catch (error) {
+        console.log("error in adding item");
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
+export const UpdateQuantity = async (req, res) => {
+        const { quantity,productId ,userId} = req.body
+
+        try {
+            const user = await User.findById(userId)
+            if(!user){
+                throw new Error("User not Found")
+            }
+            const CheckCart = user.cart.findIndex(item => item.product.toString() == productId)
+            if(CheckCart){
+
+            }
+        } catch (error) {
+            console.log("Error in update cart quantity");
+            res.status(500).json({message: error.message})
+        }
+
+} 

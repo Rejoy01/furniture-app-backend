@@ -5,6 +5,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import Auth from "./Routes/AuthRoute.js"
 import Product from './Routes/ProductRoute.js';
+import User from './Routes/UserRoutes.js';
 
 const app = express()
 
@@ -19,5 +20,5 @@ mongoose.connect(process.env.DB_CONNECTION_STRING)
 .catch((error)=>console.log(error))
 
 app.use('/Auth',Auth)
-
+app.use('/user',User)
 app.use('/products',Product)
