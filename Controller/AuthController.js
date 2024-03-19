@@ -2,86 +2,44 @@ import User from "../Model/userSchema.js";
 import Product from "../Model/productSchema.js";
 
 import bcrypt, { compare } from "bcrypt";
+import mongoose from "mongoose";
 
-export const registerUser = async (req,res)=>{
-    const {username,email,password} = req.body;
+export const registerUser = async (req, res) => {
+  const { username, email, password } = req.body;
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(password,salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPass = await bcrypt.hash(password, salt);
 
-    try {
-        
-        const newUser = new User({
-            username,
-            email,
-            password: hashedPass
-        })
-        newUser.save()
-        res.status(200).json(newUser)
-    } catch (error) {
-        console.log('Error creating user',error);
-    }
-
-}
-
-
+  try {
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPass,
+    });
+    newUser.save();
+    res.status(200).json(newUser);
+  } catch (error) {
+    console.log("Error creating user", error);
+  }
+};
 
 export const LoginUser = async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    try {
-        const foundUser = await User.findOne({ username: username }); // Use the User model
-        if (foundUser) {
-            const validate = await bcrypt.compare(password,foundUser.password); // Ensure bcrypt is imported
+  try {
+    const foundUser = await User.findOne({ username: username }); // Use the User model
+    if (foundUser) {
+      const validate = await bcrypt.compare(password, foundUser.password); // Ensure bcrypt is imported
 
-            validate ? res.status(200).json(foundUser) : res.status(400).json("Invalid Password");
-        } else {
-            res.status(404).json('No User Found');
-        }
-    } catch (error) {
-        console.error("Error in logging", error);
-        res.status(500).json({ message: "Internal server error" }); // Handle internal server error
+      validate
+        ? res.status(200).json(foundUser)
+        : res.status(400).json("Invalid Password");
+    } else {
+      res.status(404).json("No User Found");
     }
-}
+  } catch (error) {
+    console.error("Error in logging", error);
+    res.status(500).json({ message: "Internal server error" }); // Handle internal server error
+  }
+};
 
-export const UserWishList = async (req, res) => {
-    
-    const { id } = req.params;
-    const {email} = req.body;
-    
-    try {
-        
-        const user = await User.findOne({ email: email});
-        if(user){
-            
-            await user.updateOne({$push: {wishlist : id}})
-            res.status(200).json(user)
-        }else{
-            throw new Error("User not Found");;
-        }
-
-    } catch (error) {
-        res.status(404).json({message:error.message});
-    }
-
-}
-
-export const WishListProduct = async (req, res) => {
-    const {email} = req.body;
-    
-    try {
-        
-        const user = await User.findOne({ email: email});
-        if (user) {
-              
-            const ProductIds = user.wishlist
-            const Products = await Product.find({_id:{$in: ProductIds}})
-            res.status(200).json(Products)
-        }else{
-            throw new Error("User not Found");
-        }
-            
-    } catch (error) {
-        res.status(500).json({message:error.message});
-    }
-}
