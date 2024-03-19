@@ -75,10 +75,15 @@ export const UpdateQuantity = async (req, res) => {
             if(!user){
                 throw new Error("User not Found")
             }
-            const CheckCart = user.cart.findIndex(item => item.product.toString() == productId)
-            if(CheckCart){
-
+            const CheckCart = user.cart.find(item => item.product.toString() == productId)
+            if(!CheckCart){
+                res.status(404).json({ message: 'Item not found in cart' });
             }
+            
+            CheckCart.quantity = quantity
+            await user.save()
+
+            res.status(200).json(user)
         } catch (error) {
             console.log("Error in update cart quantity");
             res.status(500).json({message: error.message})
