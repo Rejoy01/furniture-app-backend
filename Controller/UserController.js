@@ -1,6 +1,7 @@
 
 import User from "../Model/userSchema.js";
 import Product from "../Model/productSchema.js";
+import order from "../Model/orderSchema.js";
 
 
 export const UserWishList = async (req, res) => {
@@ -47,7 +48,7 @@ export const AddItem = async (req, res) => {
         if (user) {
             const CheckProduct = await Product.findById(productId)
             if(!CheckProduct) {
-                res.status(404).json({ message:"product not found"})
+                return res.status(404).json({ message:"product not found"})
             }
             const existingItemIndex = user.cart.findIndex(item => item.product.toString() === productId);
                 if(existingItemIndex !==-1){
@@ -77,7 +78,7 @@ export const UpdateQuantity = async (req, res) => {
             }
             const CheckCart = user.cart.find(item => item.product.toString() == productId)
             if(!CheckCart){
-                res.status(404).json({ message: 'Item not found in cart' });
+                return res.status(404).json({ message: 'Item not found in cart' });
             }
 
             CheckCart.quantity = quantity
@@ -97,7 +98,7 @@ export const DeleteItem = async (req, res) => {
     try {
         const user = await User.findById(userId);
         if (!user) {
-            throw new Error("User not found");
+            throw new Error("User not Found")
         }
         
         const updatedCart = user.cart.filter(item => item.product.toString() !== productId);
@@ -139,3 +140,23 @@ export const getCartItem = async (req,res) =>{
 }
 
 
+export const Order = async (req,res)=>{
+    const {carItem , billingAddres , userId , total} = req.body
+
+    try {
+        const user  = await User.findById(userId)
+        if (!user) {
+            throw new Error('User not found')
+        }
+
+        const Order = new order({
+            item: carItem,
+            billingAddres,
+
+        })
+
+    } catch (error) {
+        res.status(500).json({ message:error.message });
+    }
+
+}

@@ -1,8 +1,8 @@
 import User from "../Model/userSchema.js";
-import Product from "../Model/productSchema.js";
+
 
 import bcrypt, { compare } from "bcrypt";
-import mongoose from "mongoose";
+
 
 export const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
