@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 const cartitemSchema = new Schema({
   product: {
@@ -14,6 +15,11 @@ const cartitemSchema = new Schema({
 });
 
 const orderSchema = new Schema({
+  orderId: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   item: [cartitemSchema],
   total: {
     type: Number,
@@ -59,12 +65,12 @@ const orderSchema = new Schema({
         type: String,
         required: true,
       },
-      email:{
+      email: {
         type: String,
-        required: true
+        required: true,
       },
-      orderNotes:String
-    }
+      orderNotes: String,
+    },
   ],
   createdAt: {
     type: Date,
@@ -99,6 +105,18 @@ const UserSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+UserSchema.pre("save", (next) => {
+  const user = this;
+  if (user.orders && user.orders.length > 0) {
+    user.orders.forEach((order) => {
+      if (!order.oderId) {
+        order.orderId = uuidv4();
+      }
+    });
+  }
+  next();
 });
 
 const User = mongoose.model("user", UserSchema);
