@@ -37,7 +37,7 @@ export const WishListProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
+//cart
 export const AddItem = async (req, res) => {
 
     const {userId , productId,quantity} = req.body;
@@ -83,7 +83,7 @@ export const UpdateQuantity = async (req, res) => {
             CheckCart.quantity = quantity
             await user.save()
 
-            res.status(200).json({message:"cart update successfully"})
+            res.status(200).json({message:"item quantity updated successfully"})
         } catch (error) {
             console.log("Error in update cart quantity");
             res.status(500).json({message: error.message})
@@ -99,6 +99,7 @@ export const DeleteItem = async (req, res) => {
         if (!user) {
             throw new Error("User not found");
         }
+        
         const updatedCart = user.cart.filter(item => item.product.toString() !== productId);
 
         user.cart = updatedCart;
@@ -109,5 +110,32 @@ export const DeleteItem = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getCartItem = async (req,res) =>{
+    const {id} = req.params
+    try {
+        const user = await User.findById(id)
+        if(!user){
+            return res.status(404).json({ message:"user not found"})
+        }
+        const productIds = user.cart.map(item => item.product)
+
+        const products = await Product.find({ _id:{$in : productIds}})
+
+        const cartContent = user.cart.map((Cartitem) => {
+            const product = products.find(product=>product.id.toString() === Cartitem.product.toString())
+            return {
+                product : product,
+                quantity : Cartitem.quantity
+            }
+        })
+        res.status(200).json(cartContent)
+
+
+    } catch (error) {
+        console.log('error in fetching cartItems', error);
+        res.status(500).json({message: error.message})
+    }
+}
 
 
