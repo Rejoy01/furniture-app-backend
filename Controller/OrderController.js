@@ -62,3 +62,27 @@ export const GetAll = async (req,res)=>{
         return res.status(404).json({message: error.message})
     }
 }
+
+export const Orders = async (req, res) => {
+    const {id}=req.params
+    console.log(id);
+    try {
+        const Order = await order.findById(id)
+        
+        const ProductId = Order.item.map((item) => item.product)
+        const Products = await Product.find({_id:{$in : ProductId}})
+        if (!Order) {
+            throw new Error("Order not found")
+        }
+        const response = {
+            order:Order,
+            Product : Products
+        }
+        res.status(200).json(response)
+        return response
+        
+        
+    } catch (error) {
+        return res.status(500).json({message: error.message})
+    }
+}
