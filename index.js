@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import Auth from "./Routes/AuthRoute.js"
 import Product from './Routes/ProductRoute.js';
 import User from './Routes/UserRoutes.js';
+import Order from "./Routes/OrderRoute.js"
 
 const app = express()
 
@@ -22,3 +23,4 @@ mongoose.connect(process.env.DB_CONNECTION_STRING)
 app.use('/Auth',Auth)
 app.use('/user',User)
 app.use('/products',Product)
+app.use('/order',Order)

@@ -50,11 +50,13 @@ export const AddItem = async (req, res) => {
             if(!CheckProduct) {
                 return res.status(404).json({ message:"product not found"})
             }
+            const price = CheckProduct.price
+            console.log(price);
             const existingItemIndex = user.cart.findIndex(item => item.product.toString() === productId);
                 if(existingItemIndex !==-1){
                 user.cart[existingItemIndex].quantity += parsedQuantity
                  }else{
-                user.cart.push({product : productId,quantity})
+                user.cart.push({product : productId,quantity,price:price})
                 }
             await user.save()
 
@@ -139,24 +141,3 @@ export const getCartItem = async (req,res) =>{
     }
 }
 
-
-export const Order = async (req,res)=>{
-    const {carItem , billingAddres , userId , total} = req.body
-
-    try {
-        const user  = await User.findById(userId)
-        if (!user) {
-            throw new Error('User not found')
-        }
-
-        const Order = new order({
-            item: carItem,
-            billingAddres,
-
-        })
-
-    } catch (error) {
-        res.status(500).json({ message:error.message });
-    }
-
-}

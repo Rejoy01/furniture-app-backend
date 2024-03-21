@@ -18,7 +18,10 @@ const orderSchema = new Schema({
     unique: true,
     required: true,
   },
-  item: [cartitemSchema],
+  item: {
+    type:[cartitemSchema],
+    required: true,
+  },
   total: {
     type: Number,
     required: true,
@@ -76,12 +79,15 @@ const orderSchema = new Schema({
   },
 });
 
-orderSchema.pre("save", function (next) {
+orderSchema.pre('validate', function (next) {
+  console.log('Pre-save hook triggered');
   if (!this.orderId) {
-    this.orderId = uuidv4();
+      console.log('Generating orderId...');
+      this.orderId = uuidv4();
   }
   next();
 });
+
 
 const order = mongoose.model("order", orderSchema);
 
