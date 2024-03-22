@@ -11,7 +11,8 @@ export const UploadProduct= async (req,res) => {
             price,
             tag,
             category,
-            color
+            color,
+            imageUrl
         })
         newProduct.save()
         res.status(200).json(newProduct)

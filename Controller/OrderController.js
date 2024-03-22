@@ -13,8 +13,14 @@ export const OrderItem = async (req,res)=>{
 
         const cartItems = user.cart;
         // console.log(cartItems);
-
-        const total = cartItems.reduce((total, item) => total + item.quantity * item.price, 0)
+        const shippingCharge = 50
+        const tax = 100
+         
+        const Subtotal = user.cart.reduce((acc, cartItem) => acc + cartItem.subTotal, 0);
+        
+        
+        const total = Subtotal + shippingCharge + tax;
+        
       
         if(cartItems.length === 0){
             throw new Error("Cart is empty")
@@ -26,7 +32,8 @@ export const OrderItem = async (req,res)=>{
                 userId : userId,
                 email : email
             },
-            total:total
+            total:parseInt(total),
+            subTotal: Subtotal
         })
 
         await Order.save()

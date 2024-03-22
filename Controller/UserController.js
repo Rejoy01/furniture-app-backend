@@ -2,6 +2,7 @@
 import User from "../Model/userSchema.js";
 import Product from "../Model/productSchema.js";
 import order from "../Model/orderSchema.js";
+import { LoginUser } from "./AuthController.js";
 
 
 export const UserWishList = async (req, res) => {
@@ -38,6 +39,7 @@ export const WishListProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 //cart
 export const AddItem = async (req, res) => {
 
@@ -51,12 +53,14 @@ export const AddItem = async (req, res) => {
                 return res.status(404).json({ message:"product not found"})
             }
             const price = CheckProduct.price
-            console.log(price);
+            
+            const subTotal = CheckProduct.price * parsedQuantity
+            // console.log(price);
             const existingItemIndex = user.cart.findIndex(item => item.product.toString() === productId);
                 if(existingItemIndex !==-1){
                 user.cart[existingItemIndex].quantity += parsedQuantity
                  }else{
-                user.cart.push({product : productId,quantity,price:price})
+                user.cart.push({product : productId,quantity,price:price,subTotal: subTotal})
                 }
             await user.save()
 
@@ -82,11 +86,12 @@ export const UpdateQuantity = async (req, res) => {
             if(!CheckCart){
                 return res.status(404).json({ message: 'Item not found in cart' });
             }
-
+            const subTotal = CheckCart.price * quantity;
             CheckCart.quantity = quantity
+            CheckCart.subTotal = subTotal;
             await user.save()
 
-            res.status(200).json({message:"item quantity updated successfully"})
+            res.status(200).json({message:"item quantity updated successfully",user:user})
         } catch (error) {
             console.log("Error in update cart quantity");
             res.status(500).json({message: error.message})

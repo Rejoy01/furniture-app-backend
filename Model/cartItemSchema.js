@@ -14,6 +14,9 @@ const cartitemSchema = new Schema({
     price:{
       type:Number,
       required:true
+    },
+    subTotal:{
+      type : Number ,
     }
   });
 

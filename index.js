@@ -7,6 +7,8 @@ import Auth from "./Routes/AuthRoute.js"
 import Product from './Routes/ProductRoute.js';
 import User from './Routes/UserRoutes.js';
 import Order from "./Routes/OrderRoute.js"
+import Payment from "./Routes/PaymentRoute.js"
+import { v2 as cloudinary } from 'cloudinary';
 
 const app = express()
 
@@ -24,3 +26,11 @@ app.use('/Auth',Auth)
 app.use('/user',User)
 app.use('/products',Product)
 app.use('/order',Order)
+app.use('/payment',Payment)
+
+
+cloudinary.config({
+  cloud_name: 'dnirq5sxq',
+  api_key: '174843453437244',
+  api_secret: 'LxFkLHCWls0kbnaelRBz0yEM4vc'
+});
