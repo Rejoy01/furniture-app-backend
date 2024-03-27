@@ -146,3 +146,23 @@ export const getCartItem = async (req,res) =>{
     }
 }
 
+
+export const UpdateUser = (async (req, res) => {
+
+    const {userId} = req.params
+    const {password} = req.body
+    try {
+       
+        if(password){
+            const salt = await bcrypt.genSalt(10)
+            req.body.password = await bcrypt.hash(password,salt)
+        }
+        const user = await User.findByIdAndUpdate(userId,req.body,{new:true})
+
+        res.status(200).json(user)
+
+    } catch (error) {
+        return res.status(200).json({message:error.message})
+    }
+
+})

@@ -29,6 +29,9 @@ const UserSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  Fname:String,
+  Lname:String,
+  Display:String,
 });
 
 
