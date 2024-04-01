@@ -57,7 +57,8 @@ export const GetAll = async (req,res)=>{
         const user = await User.findById(userId)
         
         if(!user){
-            throw new Error(`User Not found`)
+            throw new Error(`invalid user`)
+
         }
 
         const Orders = await order.find({"user.userId" :{$in : userId}})
