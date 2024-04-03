@@ -87,6 +87,14 @@ orderSchema.pre('validate', function (next) {
   }
   next();
 });
+orderSchema.post('validate', function (next) {
+  console.log('Pre-save hook triggered');
+  if (!this.orderId) {
+      console.log('Generating orderId...');
+      this.orderId = uuidv4();
+  }
+  next();
+});
 
 
 const order = mongoose.model("order", orderSchema);
